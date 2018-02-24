@@ -1,0 +1,2 @@
+# raycypp
+Barebones C++ raytracer.
