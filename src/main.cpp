@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <png++/png.hpp>
+#include <glm/glm.hpp>
 
 int main() {
   std::cout << "Raycypp v0.0.0" << std::endl;
