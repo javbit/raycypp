@@ -9,7 +9,7 @@ namespace geom {
 
   ray::ray(glm::vec3 origin, glm::vec3 direction)
     : origin_(origin)
-    , direction_(direction) {}
+    , direction_(glm::normalize(direction)) {}
 
   glm::vec3 ray::origin() const {
     return origin_;
