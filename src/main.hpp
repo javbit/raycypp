@@ -5,7 +5,8 @@
 #include <glm/vec3.hpp>
 
 #include "geom/ray.hpp"
+#include "geom/sphere.hpp"
 
-png::rgb_pixel color(const geom::ray &ray);
+png::rgb_pixel color(const geom::ray &ray, const geom::sphere &s);
 
 #endif

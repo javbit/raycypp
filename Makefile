@@ -9,13 +9,16 @@ CXXFLAGS += `libpng-config --cflags`
 LD = `which clang++`
 LDLIBS = `libpng-config --ldflags`
 
-$(EXE): main.o ray.o
+$(EXE): main.o ray.o sphere.o
 	$(LD) $^ $(LDFLAGS) $(LDLIBS) -o $@
 
-main.o: $(SRCDIR)/main.cpp $(SRCDIR)/main.hpp
+main.o: $(SRCDIR)/main.cpp
 	$(CXX) $^ $(CXXFLAGS) -o $@
 
-ray.o: $(GEOMDIR)/ray.cpp $(GEOMDIR)/ray.hpp
+ray.o: $(GEOMDIR)/ray.cpp
+	$(CXX) $^ $(CXXFLAGS) -o $@
+
+sphere.o: $(GEOMDIR)/sphere.cpp
 	$(CXX) $^ $(CXXFLAGS) -o $@
 
 .PHONY: clean
