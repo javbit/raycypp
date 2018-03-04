@@ -6,7 +6,8 @@
 
 #include "geom/ray.hpp"
 #include "geom/sphere.hpp"
+#include "geom/scene.hpp"
 
-png::rgb_pixel color(const geom::ray &ray, const geom::sphere &s);
+png::rgb_pixel color(const geom::ray &ray, const geom::scene &world);
 
 #endif

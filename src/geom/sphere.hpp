@@ -4,14 +4,19 @@
 #include <glm/vec3.hpp>
 #include "ray.hpp"
 
+#include "hittable.hpp"
+
 namespace geom {
-  class sphere {
+  class sphere : public hittable {
   public:
     sphere();
     sphere(glm::vec3 center, float radius);
     glm::vec3 center() const;
     float radius() const;
-    float intersect(const ray &ray) const;
+    virtual bool hit(const ray &ray,
+                     hitrecord &record,
+                     float t_min = 0.0f,
+                     float t_max = INF) const;
   private:
     glm::vec3 center_;
     float radius_;
