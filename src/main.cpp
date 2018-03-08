@@ -3,13 +3,13 @@
 #include <iostream>
 #include <random>
 
-#include <png++/png.hpp>
 #include <glm/glm.hpp>
+#include <png++/png.hpp>
 
-#include "geom/ray.hpp"
 #include "geom/hittable.hpp"
-#include "geom/sphere.hpp"
+#include "geom/ray.hpp"
 #include "geom/scene.hpp"
+#include "geom/sphere.hpp"
 
 #include "util/camera.hpp"
 #include "util/projcam.hpp"
@@ -29,6 +29,7 @@ int main() {
   std::uniform_real_distribution<float> dis;
 
   // Camera information
+
   const glm::vec3 origin(0.0, 0.0, 0.0);
   const glm::vec3 i(4.0, 0.0, 0.0);
   const glm::vec3 j(0.0, 2.0, 0.0);
@@ -66,7 +67,8 @@ int main() {
   }
 
   // Clean up
-  for (std::vector<geom::hittable *>::iterator it = list.begin(); it != list.end(); ++it) {
+  for (std::vector<geom::hittable *>::iterator it = list.begin();
+       it != list.end(); ++it) {
     delete *it;
   }
   if (cam)
@@ -83,13 +85,14 @@ glm::vec3 color(const geom::ray &ray, const geom::scene &world) {
   }
   // Background if there are no intersections.
   float t = 0.5f * (ray.direction().y + 1.0f);
-  glm::vec3 color = (1.0f - t)*glm::vec3(1.0, 1.0, 1.0)
-    + t*glm::vec3(0.71, 0.49, 0.86);
+  glm::vec3 color =
+      (1.0f - t) * glm::vec3(1.0, 1.0, 1.0) + t * glm::vec3(0.71, 0.49, 0.86);
   return color;
 }
 
 png::rgb_pixel glm2png(glm::vec3 color) {
-  return png::rgb_pixel(png::byte(color.r * 0xFF),
-                        png::byte(color.g * 0xFF),
+  return png::rgb_pixel(png::byte(color.r * 0xFF), png::byte(color.g * 0xFF),
                         png::byte(color.b * 0xFF));
 }
+
+//  LocalWords:  Raycypp
