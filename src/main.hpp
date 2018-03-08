@@ -8,6 +8,7 @@
 #include "geom/sphere.hpp"
 #include "geom/scene.hpp"
 
-png::rgb_pixel color(const geom::ray &ray, const geom::scene &world);
+glm::vec3 color(const geom::ray &ray, const geom::scene &world);
+png::rgb_pixel glm2png(glm::vec3);
 
 #endif

@@ -1,6 +1,7 @@
 EXE = raycypp
 SRCDIR = src
 GEOMDIR = $(SRCDIR)/geom
+UTILDIR = $(SRCDIR)/util
 
 CXX = `which clang++`
 CXXFLAGS = -c -Weverything
@@ -9,7 +10,7 @@ CXXFLAGS += `libpng-config --cflags`
 LD = `which clang++`
 LDLIBS = `libpng-config --ldflags`
 
-$(EXE): main.o ray.o sphere.o scene.o
+$(EXE): main.o ray.o sphere.o scene.o projcam.o
 	$(LD) $^ $(LDFLAGS) $(LDLIBS) -o $@
 
 main.o: $(SRCDIR)/main.cpp
@@ -22,6 +23,9 @@ sphere.o: $(GEOMDIR)/sphere.cpp
 	$(CXX) $^ $(CXXFLAGS) -o $@
 
 scene.o: $(GEOMDIR)/scene.cpp
+	$(CXX) $^ $(CXXFLAGS) -o $@
+
+projcam.o: $(UTILDIR)/projcam.cpp
 	$(CXX) $^ $(CXXFLAGS) -o $@
 
 .PHONY: clean
