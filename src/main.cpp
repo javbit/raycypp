@@ -12,6 +12,7 @@
 #include "geom/scene.hpp"
 #include "geom/sphere.hpp"
 #include "geom/triangle.hpp"
+#include "geom/quadrangle.hpp"
 
 #include "util/camera.hpp"
 #include "util/projcam.hpp"
@@ -23,7 +24,7 @@ const unsigned int ITERATIONS = 128;
 
 int main() {
   // Version information
-  std::cout << "Raycypp v0.4.0" << std::endl;
+  std::cout << "Raycypp v0.4.1" << std::endl;
 
   // Random setup
   std::random_device rd;
@@ -57,6 +58,9 @@ int main() {
   list.push_back(new geom::triangle(glm::vec3(0.5, 0, -1),
                                     glm::vec3(-0.5, 0, -1),
                                     glm::vec3(0, 0.5, -1), -1, false));
+  list.push_back(new geom::quadrangle(glm::vec3(-0.5, 0, -1),
+                                      glm::vec3(0.5, 0, 0),
+                                      glm::vec3(0, -0.5, -0.5), -1, false));
   geom::scene world(&list);
 
   // Ray tracing
