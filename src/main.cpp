@@ -15,7 +15,7 @@
 #include "geom/quadrangle.hpp"
 
 #include "util/camera.hpp"
-#include "util/projcam.hpp"
+#include "util/perscam.hpp"
 
 #define PROJECTIVEP true
 
@@ -43,7 +43,7 @@ int main() {
   util::camera *cam = NULL;
 
   if (PROJECTIVEP)
-    cam = new util::projcam(origin, framepos, i, j);
+    cam = new util::perscam(origin, framepos, i, j);
   else
     // TODO: implement orthogonal camera
     std::cout << "No orthogonal camera at the moment." << std::endl;
