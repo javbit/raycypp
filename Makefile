@@ -10,7 +10,7 @@ CXXFLAGS += `libpng-config --cflags`
 LD = `which clang++`
 LDLIBS = `libpng-config --ldflags`
 
-$(EXE): main.o ray.o sphere.o scene.o projcam.o
+$(EXE): main.o ray.o sphere.o scene.o projcam.o triangle.o
 	$(LD) $^ $(LDFLAGS) $(LDLIBS) -o $@
 
 main.o: $(SRCDIR)/main.cpp
@@ -20,6 +20,9 @@ ray.o: $(GEOMDIR)/ray.cpp
 	$(CXX) $^ $(CXXFLAGS) -o $@
 
 sphere.o: $(GEOMDIR)/sphere.cpp
+	$(CXX) $^ $(CXXFLAGS) -o $@
+
+triangle.o: $(GEOMDIR)/triangle.cpp
 	$(CXX) $^ $(CXXFLAGS) -o $@
 
 scene.o: $(GEOMDIR)/scene.cpp

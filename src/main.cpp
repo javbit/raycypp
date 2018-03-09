@@ -1,5 +1,6 @@
 #include "main.hpp"
 
+#include <iomanip>
 #include <iostream>
 #include <random>
 
@@ -10,6 +11,7 @@
 #include "geom/ray.hpp"
 #include "geom/scene.hpp"
 #include "geom/sphere.hpp"
+#include "geom/triangle.hpp"
 
 #include "util/camera.hpp"
 #include "util/projcam.hpp"
@@ -21,7 +23,7 @@ const unsigned int ITERATIONS = 128;
 
 int main() {
   // Version information
-  std::cout << "Raycypp v0.3.0" << std::endl;
+  std::cout << "Raycypp v0.4.0" << std::endl;
 
   // Random setup
   std::random_device rd;
@@ -47,8 +49,14 @@ int main() {
 
   // Scene building
   std::vector<geom::hittable *> list;
-  list.push_back(new geom::sphere(glm::vec3(0, 0, -1), 0.5));
-  list.push_back(new geom::sphere(glm::vec3(0, -100.5, -1), 100));
+  // list.push_back(new geom::sphere(glm::vec3(0, 0, -1), 0.5));
+  // list.push_back(new geom::sphere(glm::vec3(0, -100.5, -1), 100));
+  list.push_back(new geom::sphere(glm::vec3(-0.5, 0, -1), 0.1));
+  list.push_back(new geom::sphere(glm::vec3(0.5, 0, -1), 0.1));
+  list.push_back(new geom::sphere(glm::vec3(0, 0.5, -1), 0.1));
+  list.push_back(new geom::triangle(glm::vec3(0.5, 0, -1),
+                                    glm::vec3(-0.5, 0, -1),
+                                    glm::vec3(0, 0.5, -1), -1, false));
   geom::scene world(&list);
 
   // Ray tracing
@@ -63,6 +71,10 @@ int main() {
         col = col + color(ray, world);
       }
       image[image.get_height() - y - 1][x] = glm2png(col / float(ITERATIONS));
+      std::cout << "\33[2K"
+                << "Progress: " << std::setw(3)
+                << int(float(x + y * WIDTH) / float(WIDTH * HEIGHT) * 100)
+                << "%\r" << std::flush;
     }
   }
 
@@ -74,6 +86,8 @@ int main() {
   if (cam)
     delete cam;
 
+  std::cout << "\33[2K"
+            << "Done" << std::endl;
   // Write image
   image.write("render.png");
 }
