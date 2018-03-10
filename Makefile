@@ -10,7 +10,7 @@ CXXFLAGS += `libpng-config --cflags`
 LD = `which clang++`
 LDLIBS = `libpng-config --ldflags`
 
-$(EXE): main.o ray.o sphere.o scene.o projcam.o triangle.o quadrangle.o
+$(EXE): main.o ray.o sphere.o scene.o triangle.o quadrangle.o perscam.o orthcam.o
 	$(LD) $^ $(LDFLAGS) $(LDLIBS) -o $@
 
 main.o: $(SRCDIR)/main.cpp
@@ -31,7 +31,10 @@ quadrangle.o: $(GEOMDIR)/quadrangle.cpp
 scene.o: $(GEOMDIR)/scene.cpp
 	$(CXX) $^ $(CXXFLAGS) -o $@
 
-projcam.o: $(UTILDIR)/projcam.cpp
+perscam.o: $(UTILDIR)/perscam.cpp
+	$(CXX) $^ $(CXXFLAGS) -o $@
+
+orthcam.o: $(UTILDIR)/orthcam.cpp
 	$(CXX) $^ $(CXXFLAGS) -o $@
 
 .PHONY: clean

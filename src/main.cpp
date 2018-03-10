@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <iostream>
 #include <random>
+#include <string>
 
 #include <glm/glm.hpp>
 #include <png++/png.hpp>
@@ -16,15 +17,14 @@
 
 #include "util/camera.hpp"
 #include "util/perscam.hpp"
-
-#define PROJECTIVEP true
+#include "util/orthcam.hpp"
 
 const unsigned int WIDTH = 1024, HEIGHT = 512;
 const unsigned int ITERATIONS = 128;
 
-int main() {
+int main(int argc, char **argv) {
   // Version information
-  std::cout << "Raycypp v0.4.1" << std::endl;
+  std::cout << "Raycypp v0.4.2" << std::endl;
 
   // Random setup
   std::random_device rd;
@@ -39,14 +39,23 @@ int main() {
   const glm::vec3 framepos(-2.0, -1, -1.0);
 
   // Camera pointer
-  // TODO: set via flag option
   util::camera *cam = NULL;
 
-  if (PROJECTIVEP)
+  bool persp;
+  if (argc < 2)
+    persp = true;
+  else {
+    if (argv[1] == "-O" || argv[1] == "--orthographic")
+      persp = false;
+    else if (argv[1] == "-P" || argv[1] == "--perspective")
+      persp = true;
+    else persp = true;
+  }
+
+  if (persp)
     cam = new util::perscam(origin, framepos, i, j);
   else
-    // TODO: implement orthogonal camera
-    std::cout << "No orthogonal camera at the moment." << std::endl;
+    cam = new util::orthcam(glm::vec3(0, 0, -1), framepos, i, j);
 
   // Scene building
   std::vector<geom::hittable *> list;
