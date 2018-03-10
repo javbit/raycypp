@@ -8,7 +8,8 @@
 #include "geom/scene.hpp"
 #include "geom/sphere.hpp"
 
-glm::vec3 color(const geom::ray &ray, const geom::scene &world);
+glm::vec3 color(const geom::ray &ray, const geom::scene &world, int iter = 0);
 png::rgb_pixel glm2png(glm::vec3);
+glm::vec3 random_in_unit_sphere();
 
 #endif

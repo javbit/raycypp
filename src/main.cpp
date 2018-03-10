@@ -9,20 +9,22 @@
 #include <png++/png.hpp>
 
 #include "geom/hittable.hpp"
+#include "geom/quadrangle.hpp"
 #include "geom/ray.hpp"
 #include "geom/scene.hpp"
 #include "geom/sphere.hpp"
 #include "geom/triangle.hpp"
-#include "geom/quadrangle.hpp"
 
 #include "util/camera.hpp"
-#include "util/perscam.hpp"
 #include "util/orthcam.hpp"
+#include "util/perscam.hpp"
+
+#define PERSPECTIVEP false
 
 const unsigned int WIDTH = 1024, HEIGHT = 512;
 const unsigned int ITERATIONS = 128;
 
-int main(int argc, char **argv) {
+int main() {
   // Version information
   std::cout << "Raycypp v0.4.2" << std::endl;
 
@@ -41,35 +43,24 @@ int main(int argc, char **argv) {
   // Camera pointer
   util::camera *cam = NULL;
 
-  bool persp;
-  if (argc < 2)
-    persp = true;
-  else {
-    if (argv[1] == "-O" || argv[1] == "--orthographic")
-      persp = false;
-    else if (argv[1] == "-P" || argv[1] == "--perspective")
-      persp = true;
-    else persp = true;
-  }
-
-  if (persp)
+  if (PERSPECTIVEP)
     cam = new util::perscam(origin, framepos, i, j);
   else
     cam = new util::orthcam(glm::vec3(0, 0, -1), framepos, i, j);
 
   // Scene building
   std::vector<geom::hittable *> list;
-  // list.push_back(new geom::sphere(glm::vec3(0, 0, -1), 0.5));
-  // list.push_back(new geom::sphere(glm::vec3(0, -100.5, -1), 100));
-  list.push_back(new geom::sphere(glm::vec3(-0.5, 0, -1), 0.1));
-  list.push_back(new geom::sphere(glm::vec3(0.5, 0, -1), 0.1));
-  list.push_back(new geom::sphere(glm::vec3(0, 0.5, -1), 0.1));
-  list.push_back(new geom::triangle(glm::vec3(0.5, 0, -1),
-                                    glm::vec3(-0.5, 0, -1),
-                                    glm::vec3(0, 0.5, -1), -1, false));
-  list.push_back(new geom::quadrangle(glm::vec3(-0.5, 0, -1),
-                                      glm::vec3(0.5, 0, 0),
-                                      glm::vec3(0, -0.5, -0.5), -1, false));
+  list.push_back(new geom::sphere(glm::vec3(0.f, -0.25f, -1), 0.25f));
+  list.push_back(new geom::sphere(glm::vec3(0.f, -100.5f, -1.f), 100.f));
+  list.push_back(new geom::sphere(glm::vec3(-0.5f, 0.f, -1.f), 0.1f));
+  list.push_back(new geom::sphere(glm::vec3(0.5, 0, -1), 0.1f));
+  list.push_back(new geom::sphere(glm::vec3(0.f, 0.5f, -1.f), 0.1f));
+  list.push_back(new geom::triangle(glm::vec3(0.5f, 0.f, -1.f),
+                                    glm::vec3(-0.5f, 0.f, -1.f),
+                                    glm::vec3(0.f, 0.5f, -1.f), -1.f, false));
+  list.push_back(new geom::quadrangle(glm::vec3(-0.5f, 0.f, -1.f),
+                                      glm::vec3(0.5f, 0.f, 0.f),
+                                      glm::vec3(0.f, -0.5f, -0.5f), -1.f, false));
   geom::scene world(&list);
 
   // Ray tracing
@@ -105,16 +96,17 @@ int main(int argc, char **argv) {
   image.write("render.png");
 }
 
-glm::vec3 color(const geom::ray &ray, const geom::scene &world) {
+glm::vec3 color(const geom::ray &ray, const geom::scene &world, int iter) {
   geom::hitrecord rec;
-  if (world.hit(ray, rec)) {
-    return (rec.normal + glm::vec3(1, 1, 1)) / 2.0f;
+  if (world.hit(ray, rec) && iter < 5) {
+    glm::vec3 target = rec.point + rec.normal + random_in_unit_sphere();
+    return glm::sqrt(0.33f * color(geom::ray(rec.point, target - rec.point),
+                                  world, iter + 1));
   }
   // Background if there are no intersections.
   float t = 0.5f * (ray.direction().y + 1.0f);
-  glm::vec3 color =
-      (1.0f - t) * glm::vec3(1.0, 1.0, 1.0) + t * glm::vec3(0.71, 0.49, 0.86);
-  return color;
+  return (1.0f - t) * glm::vec3(1.0, 1.0, 1.0) +
+         t * glm::vec3(0.71, 0.49, 0.86);
 }
 
 png::rgb_pixel glm2png(glm::vec3 color) {
@@ -122,4 +114,16 @@ png::rgb_pixel glm2png(glm::vec3 color) {
                         png::byte(color.b * 0xFF));
 }
 
+glm::vec3 random_in_unit_sphere() {
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::uniform_real_distribution<float> dis;
+
+  glm::vec3 p;
+  do {
+    p = 2.f * glm::vec3(dis(gen), dis(gen), dis(gen)) -
+        glm::vec3(1.f, 1.f, 1.f);
+  } while (glm::dot(p, p) >= 1);
+  return p;
+}
 //  LocalWords:  Raycypp
