@@ -2,6 +2,7 @@
 Bare-bones C++ ray tracer.
 
 ## Images
+![10,000 spheres rendering](assets/10000.png "10,009-sphere Scene Rendering")
 ![Perspective rendering](assets/perspective.png "Perspective Rendering of a Scene")
 ![Orthographic rendering](assets/orthographic.png "Orthographic Rendering of a Scene")
 

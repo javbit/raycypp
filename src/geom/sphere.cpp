@@ -37,4 +37,10 @@ bool sphere::hit(const ray &ray, hitrecord &record, float t_min,
   }
   return false;
 }
+
+bool sphere::bbox(util::aabb &box) const {
+  box = util::aabb(center_ - glm::vec3(radius_, radius_, radius_),
+                   center_ + glm::vec3(radius_, radius_, radius_));
+  return true;
+}
 } // namespace geom

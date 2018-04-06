@@ -42,4 +42,12 @@ bool quadrangle::hit(const ray &ray, hitrecord &record, float t_min,
 
   return true;
 }
+
+bool quadrangle::bbox(util::aabb &box) const {
+  util::aabb bb1, bb2;
+  if (!t1_.bbox(bb1) || !t2_.bbox(bb2))
+    return false;
+  box = util::aabbMerge(bb1, bb2);
+  return true;
+}
 } // namespace geom

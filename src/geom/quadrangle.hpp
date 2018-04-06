@@ -20,6 +20,7 @@ public:
   void flip();
   virtual bool hit(const ray &ray, hitrecord &record, float t_min = 0.0f,
                    float t_max = INF) const;
+  virtual bool bbox(util::aabb &box) const;
 
 private:
   triangle t1_, t2_;

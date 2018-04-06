@@ -24,7 +24,7 @@ void triangle::flip() { normal_ *= -1.0; }
 
 bool triangle::hit(const ray &ray, hitrecord &record, float t_min,
                    float t_max) const {
-  // Möller–Trumbore ray-triangle intersection algorithm
+  // M Ö ller – Trumbore ray-triangle intersection algorithm
   glm::vec3 x, y, h, s, q;
   float a, f, u, v;
 
@@ -78,6 +78,22 @@ bool triangle::hit(const ray &ray, hitrecord &record, float t_min,
   record.point = ray.pointat(t);
 
   // Signify hit
+  return true;
+}
+
+bool triangle::bbox(util::aabb &box) const {
+  glm::vec3 minp, maxp;
+  for (glm::length_t d = 0; d < v1_.length(); ++d) {
+    float min, max;
+    min = max = v1_[d];
+    min = v2_[d] < min ? v2_[d] : min;
+    max = v2_[d] > max ? v2_[d] : max;
+    min = v3_[d] < min ? v3_[d] : min;
+    max = v3_[d] > max ? v3_[d] : max;
+    minp[d] = min;
+    maxp[d] = max;
+  }
+  box = util::aabb(minp, maxp);
   return true;
 }
 } // namespace geom

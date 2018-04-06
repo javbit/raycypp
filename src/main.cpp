@@ -19,10 +19,12 @@
 #include "util/orthcam.hpp"
 #include "util/perscam.hpp"
 
-#define PERSPECTIVEP false
+#define PERSPECTIVEP true
+
+#define SPHERES 10000
 
 const unsigned int WIDTH = 1024, HEIGHT = 512;
-const unsigned int ITERATIONS = 128;
+const unsigned int ITERATIONS = 64;
 
 int main() {
   // Version information
@@ -32,6 +34,8 @@ int main() {
   std::random_device rd;
   std::mt19937 gen(rd());
   std::uniform_real_distribution<float> dis;
+  std::uniform_real_distribution<float> loc(-5.f, 5.f);
+  std::uniform_real_distribution<float> rad(0.01f, 0.1f);
 
   // Camera information
 
@@ -50,17 +54,19 @@ int main() {
 
   // Scene building
   std::vector<geom::hittable *> list;
-  list.push_back(new geom::sphere(glm::vec3(0.f, -0.25f, -1), 0.25f));
-  list.push_back(new geom::sphere(glm::vec3(0.f, -100.5f, -1.f), 100.f));
-  list.push_back(new geom::sphere(glm::vec3(-0.5f, 0.f, -1.f), 0.1f));
-  list.push_back(new geom::sphere(glm::vec3(0.5, 0, -1), 0.1f));
-  list.push_back(new geom::sphere(glm::vec3(0.f, 0.5f, -1.f), 0.1f));
-  list.push_back(new geom::triangle(glm::vec3(0.5f, 0.f, -1.f),
-                                    glm::vec3(-0.5f, 0.f, -1.f),
-                                    glm::vec3(0.f, 0.5f, -1.f), -1.f, false));
-  list.push_back(new geom::quadrangle(glm::vec3(-0.5f, 0.f, -1.f),
-                                      glm::vec3(0.5f, 0.f, 0.f),
-                                      glm::vec3(0.f, -0.5f, -0.5f), -1.f, false));
+  // list.push_back(new geom::sphere(glm::vec3(0.f, -0.25f, -1), 0.25f));
+  // list.push_back(new geom::sphere(glm::vec3(0.f, -100.5f, -1.f), 100.f));
+  // list.push_back(new geom::sphere(glm::vec3(-0.5f, 0.f, -1.f), 0.1f));
+  // list.push_back(new geom::sphere(glm::vec3(0.5, 0, -1), 0.1f));
+  // list.push_back(new geom::sphere(glm::vec3(0.f, 0.5f, -1.f), 0.1f));
+  // list.push_back(new geom::triangle(glm::vec3(0.5f, 0.f, -1.f),
+  //                                   glm::vec3(-0.5f, 0.f, -1.f),
+  //                                   glm::vec3(0.f, 0.5f, -1.f), -1.f, false));
+  // list.push_back(new geom::quadrangle(glm::vec3(-0.5f, 0.f, -1.f),
+  //                                     glm::vec3(0.5f, 0.f, 0.f),
+  //                                     glm::vec3(0.f, -0.5f, -0.5f), -1.f, false));
+  for (unsigned i = 0; i < SPHERES; ++i)
+    list.push_back(new geom::sphere(glm::vec3(loc(gen), loc(gen), loc(gen) - 10.f), rad(gen)));
   geom::scene world(&list);
 
   // Ray tracing
