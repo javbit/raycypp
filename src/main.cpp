@@ -28,7 +28,7 @@ const unsigned int ITERATIONS = 64;
 
 int main() {
   // Version information
-  std::cout << "Raycypp v0.4.2" << std::endl;
+  std::cout << "Raycypp v0.5.0" << std::endl;
 
   // Random setup
   std::random_device rd;
