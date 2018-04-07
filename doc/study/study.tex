@@ -1,0 +1,45 @@
+\documentclass[a4]{article}
+
+\usepackage{booktabs}
+\usepackage{siunitx}
+
+\author{Javed Mohamed}
+\title{BVH Study}
+
+\begin{document}
+\maketitle
+
+\begin{table*}[h]
+  \centering
+  \begin{tabular}[h]{rrr}
+    \toprule
+    & \multicolumn{2}{c}{Time (\si{\second})}\\
+    \cmidrule(l){2-3}
+    Spheres & Un-Accelerated & Accelerated \\
+    \midrule
+    100 & 0.33 & 0.11 \\
+    1000 & 2.54 & 0.15 \\
+    10000 & 32.83 & 0.50 \\
+    \bottomrule
+  \end{tabular}
+  \caption[Ray-tracer runtimes]{Runtimes for accelerated and non-accelerated
+    ray-tracers.}
+  \label{tab:runtimes}
+\end{table*}
+
+The bounding volume hierarchy (BVH) used in this project uses axis-aligned
+bounding boxes (AABB). The BVH is conceptually created by first wrapping each
+geometric primitive (e.g. spheres and triangles) in an AABB. Then the list of
+elements is sorted based on the bounding box's position is space by dimension
+(i.e. sorting by the $x$-, $y$-, or $z$-axis). Then the list is split in half,
+forming the left and right halves. This process is recursively done until the
+leaf nodes are just geometric primitives. This creates a tree that can be hit.
+The idea is that we should be able to quickly discard many objects using a cheap
+hit function, then use a more expensive one once we have limited out options to
+a few primitives. This means we approach $\mathcal{O}(\log n)$ time complexity.
+Spheres were uniformly randomly generated within a cubic volume in the center of
+the image. The image is rendered using a perspective camera and was 100 by 200
+with one sample per pixel, as to ensure that the un-accelerated version would
+not take forever.
+
+\end{document}
