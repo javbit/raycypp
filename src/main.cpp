@@ -61,17 +61,22 @@ int main() {
   // list.push_back(new geom::sphere(glm::vec3(0.f, 0.5f, -1.f), 0.1f));
   // list.push_back(new geom::triangle(glm::vec3(0.5f, 0.f, -1.f),
   //                                   glm::vec3(-0.5f, 0.f, -1.f),
-  //                                   glm::vec3(0.f, 0.5f, -1.f), -1.f, false));
+  //                                   glm::vec3(0.f, 0.5f, -1.f), -1.f,
+  //                                   false));
   // list.push_back(new geom::quadrangle(glm::vec3(-0.5f, 0.f, -1.f),
   //                                     glm::vec3(0.5f, 0.f, 0.f),
-  //                                     glm::vec3(0.f, -0.5f, -0.5f), -1.f, false));
+  //                                     glm::vec3(0.f, -0.5f, -0.5f), -1.f,
+  //                                     false));
   for (unsigned i = 0; i < SPHERES; ++i)
-    list.push_back(new geom::sphere(glm::vec3(loc(gen), loc(gen), loc(gen) - 10.f), rad(gen)));
+    list.push_back(new geom::sphere(
+        glm::vec3(loc(gen), loc(gen), loc(gen) - 10.f), rad(gen)));
   geom::scene world(&list);
 
   // Ray tracing
   png::image<png::rgb_pixel> image(WIDTH, HEIGHT);
+#pragma omp parallel for
   for (unsigned int y = 0; y < image.get_height(); y++) {
+#pragma omp parallel for
     for (unsigned int x = 0; x < image.get_width(); x++) {
       glm::vec3 col(0, 0, 0);
       for (unsigned int n = 0; n < ITERATIONS; n++) {
@@ -81,10 +86,10 @@ int main() {
         col = col + color(ray, world);
       }
       image[image.get_height() - y - 1][x] = glm2png(col / float(ITERATIONS));
-      std::cout << "\33[2K"
-                << "Progress: " << std::setw(3)
-                << int(float(x + y * WIDTH) / float(WIDTH * HEIGHT) * 100)
-                << "%\r" << std::flush;
+      // std::cout << "\33[2K"
+      //           << "Progress: " << std::setw(3)
+      //           << int(float(x + y * WIDTH) / float(WIDTH * HEIGHT) * 100)
+      //           << "%\r" << std::flush;
     }
   }
 
@@ -96,8 +101,8 @@ int main() {
   if (cam)
     delete cam;
 
-  std::cout << "\33[2K"
-            << "Done" << std::endl;
+  // std::cout << "\33[2K"
+  //           << "Done" << std::endl;
   // Write image
   image.write("render.png");
 }
@@ -107,7 +112,7 @@ glm::vec3 color(const geom::ray &ray, const geom::scene &world, int iter) {
   if (world.hit(ray, rec) && iter < 5) {
     glm::vec3 target = rec.point + rec.normal + random_in_unit_sphere();
     return glm::sqrt(0.33f * color(geom::ray(rec.point, target - rec.point),
-                                  world, iter + 1));
+                                   world, iter + 1));
   }
   // Background if there are no intersections.
   float t = 0.5f * (ray.direction().y + 1.0f);
