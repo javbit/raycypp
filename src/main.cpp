@@ -1,32 +1,13 @@
 #include "main.hpp"
 
-#include <iomanip>
-#include <iostream>
-#include <random>
-#include <string>
-
-#include <glm/glm.hpp>
-#include <png++/png.hpp>
-
-#include "geom/hittable.hpp"
-#include "geom/quadrangle.hpp"
-#include "geom/ray.hpp"
-#include "geom/scene.hpp"
-#include "geom/sphere.hpp"
-#include "geom/triangle.hpp"
-
-#include "util/camera.hpp"
-#include "util/orthcam.hpp"
-#include "util/perscam.hpp"
-
 #define PERSPECTIVEP true
 
 #define SPHERES 10000
 
 const unsigned int WIDTH = 1024, HEIGHT = 512;
-const unsigned int ITERATIONS = 64;
+const unsigned int ITERATIONS = 128;
 
-int main() {
+int main(int argc, char **argv) {
   // Version information
   std::cout << "Raycypp v0.5.0" << std::endl;
 
@@ -38,7 +19,6 @@ int main() {
   std::uniform_real_distribution<float> rad(0.01f, 0.1f);
 
   // Camera information
-
   const glm::vec3 origin(0.0, 0.0, 0.0);
   const glm::vec3 i(4.0, 0.0, 0.0);
   const glm::vec3 j(0.0, 2.0, 0.0);
@@ -52,24 +32,25 @@ int main() {
   else
     cam = new util::orthcam(glm::vec3(0, 0, -1), framepos, i, j);
 
-  // Scene building
+  /* Model reading */
   std::vector<geom::hittable *> list;
-  // list.push_back(new geom::sphere(glm::vec3(0.f, -0.25f, -1), 0.25f));
-  // list.push_back(new geom::sphere(glm::vec3(0.f, -100.5f, -1.f), 100.f));
-  // list.push_back(new geom::sphere(glm::vec3(-0.5f, 0.f, -1.f), 0.1f));
-  // list.push_back(new geom::sphere(glm::vec3(0.5, 0, -1), 0.1f));
-  // list.push_back(new geom::sphere(glm::vec3(0.f, 0.5f, -1.f), 0.1f));
-  // list.push_back(new geom::triangle(glm::vec3(0.5f, 0.f, -1.f),
-  //                                   glm::vec3(-0.5f, 0.f, -1.f),
-  //                                   glm::vec3(0.f, 0.5f, -1.f), -1.f,
-  //                                   false));
-  // list.push_back(new geom::quadrangle(glm::vec3(-0.5f, 0.f, -1.f),
-  //                                     glm::vec3(0.5f, 0.f, 0.f),
-  //                                     glm::vec3(0.f, -0.5f, -0.5f), -1.f,
-  //                                     false));
-  for (unsigned i = 0; i < SPHERES; ++i)
-    list.push_back(new geom::sphere(
-        glm::vec3(loc(gen), loc(gen), loc(gen) - 10.f), rad(gen)));
+  std::string filename = argc < 2 ? "models/teapot.obj" : argv[1];
+  std::cout << "Rendering " << filename << std::endl;
+  std::ifstream model(filename);
+  char type;
+  float a, b, c;
+  std::vector<glm::vec3> vertices;
+  vertices.push_back(glm::vec3()); // Dummy
+  while (model >> type >> a >> b >> c) {
+    if (type == 'v')
+      vertices.push_back(glm::vec3(a, b, c - 1.5f));
+    else if (type == 'f') {
+      int i = int(a), j = int(b), k = int(c);
+      list.push_back(
+          new geom::triangle(vertices.at(i), vertices.at(j), vertices.at(k)));
+    }
+  }
+
   geom::scene world(&list);
 
   // Ray tracing
@@ -94,12 +75,12 @@ int main() {
   }
 
   // Clean up
-  for (std::vector<geom::hittable *>::iterator it = list.begin();
-       it != list.end(); ++it) {
-    delete *it;
-  }
-  if (cam)
-    delete cam;
+  // for (std::vector<geom::hittable *>::iterator it = list.begin();
+  //      it != list.end(); ++it) {
+  //   delete *it;
+  // }
+  // if (cam)
+  //   delete cam;
 
   // std::cout << "\33[2K"
   //           << "Done" << std::endl;
@@ -113,6 +94,7 @@ glm::vec3 color(const geom::ray &ray, const geom::scene &world, int iter) {
     glm::vec3 target = rec.point + rec.normal + random_in_unit_sphere();
     return glm::sqrt(0.33f * color(geom::ray(rec.point, target - rec.point),
                                    world, iter + 1));
+    // return (rec.normal + 1.f) / 2.0f;
   }
   // Background if there are no intersections.
   float t = 0.5f * (ray.direction().y + 1.0f);

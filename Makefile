@@ -6,15 +6,18 @@ UTILDIR = $(SRCDIR)/util
 CXX = `which clang++`
 CXXFLAGS = -c -Weverything
 CXXFLAGS += `libpng-config --cflags`
-# CXXFLAGS += -fopenmp
+CXXFLAGS += -fopenmp
 CXXFLAGS += -I/usr/local/opt/llvm/include
 
 LD = `which clang++`
 LDLIBS = `libpng-config --ldflags`
 LDFLAGS = -L/usr/local/opt/llvm/lib
-# LDFLAGS += -fopenmp
+LDFLAGS += -fopenmp
 
-$(EXE): main.o ray.o sphere.o scene.o triangle.o quadrangle.o perscam.o orthcam.o aabb.o
+OBJS = main.o ray.o sphere.o scene.o triangle.o quadrangle.o perscam.o
+OBJS += orthcam.o aabb.o
+
+$(EXE): $(OBJS)
 	$(LD) $^ $(LDFLAGS) $(LDLIBS) -o $@
 
 main.o: $(SRCDIR)/main.cpp
