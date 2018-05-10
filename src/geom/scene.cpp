@@ -60,8 +60,8 @@ bool scene::bvhnode::hit(const ray &ray, hitrecord &record, float t_min,
     return false;
 
   hitrecord lrec, rrec;
-  bool lhitp = left ? left->hit(ray, record, t_min, t_max) : false;
-  bool rhitp = right ? right->hit(ray, record, t_min, t_max) : false;
+  bool lhitp = left ? left->hit(ray, lrec, t_min, t_max) : false;
+  bool rhitp = right ? right->hit(ray, rrec, t_min, t_max) : false;
 
   if (lhitp && rhitp) {
     record = lrec.t < rrec.t ? lrec : rrec;
